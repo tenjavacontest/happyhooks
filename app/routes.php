@@ -12,3 +12,4 @@
 */
 
 Route::get('/', "HomeController@redirectThem");
+Route::get('/hook', "HomeController@handlePayload");
