@@ -18,5 +18,9 @@ class HomeController extends BaseController {
 	public function redirectThem() {
 		return Redirect::to("http://tenjava.com");
 	}
+	
+	public function handlePayload() {
+		Log::info("Got payload."); //TODO
+	}
 
 }
