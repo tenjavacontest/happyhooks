@@ -20,7 +20,21 @@ class HomeController extends BaseController {
 	}
 	
 	public function handlePayload() {
-		Log::info("Got payload."); //TODO
+		if ($this->cidrMatch(Request::getClientIp(), "192.30.252.0/22")) {
+			Log::info("Got payload."); //TODO
+		}
+		return "Thanks.";
+	}
+	
+	private function cidrMatch($ip, $cidr) { //thanks SO
+		list($subnet, $mask) = explode('/', $cidr);
+
+		if ((ip2long($ip) & ~((1 << (32 - $mask)) - 1) ) == ip2long($subnet))
+		{ 
+			return true;
+		}
+
+		return false;
 	}
 
 }
