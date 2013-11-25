@@ -21,9 +21,9 @@ class HomeController extends BaseController {
 	
 	public function handlePayload() {
 		if ($this->cidrMatch(Request::getClientIp(), "192.30.252.0/22")) {
-			Log::info("Got payload."); //TODO
-			$json = json_decode(Input::get("payload"));
-			$name = $json['commits'][0]['author']['username'];
+			Log::info("Got payload " . Input::get("payload")); //TODO
+			$json = json_decode(Input::get("payload"), true);
+			$name = $json['head_commit']['author']['username'];
                         FlareBot::sendMessage("ten.java", "Wow, such commit from $name");
 		}
 		return "Thanks.";
