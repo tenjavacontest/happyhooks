@@ -26,7 +26,7 @@ class HomeController extends BaseController {
             $head = $json->head_commit;
             $username = $head->author->username;
             $github = new Github\Client();
-            $github->authenticate(Github\Client::AUTH_HTTP_TOKEN, Config::get("private-secure.github-token"));
+            $github->authenticate(Config::get("private-secure.github-token"), null, Github\Client::AUTH_HTTP_TOKEN);
             $commit = $github->api('repo')->commits()->show('tenjavacontest', $json->repository->name, $head->id);
             FlareBot::sendMessage("tenjava", FlareBot::COLOR . FlareBot::LIME + $commit->stats->additions);
         }
