@@ -5,7 +5,9 @@
 	"license": "MIT",
 	"require": {
 		"laravel/framework": "4.0.*",
-                "rmccue/requests": ">=1.0"
+        "rmccue/requests": ">=1.0",
+        "knplabs/github-api": "*",
+		"guzzle/guzzle": "~3.7"
 	},
 	"autoload": {
 		"classmap": [
