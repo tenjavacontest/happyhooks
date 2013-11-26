@@ -29,7 +29,7 @@ class HomeController extends BaseController {
             $github->authenticate(Config::get("private-secure.github-token"), null, Github\Client::AUTH_HTTP_TOKEN);
             $commit = $github->api('repo')->commits()->show('tenjavacontest', $json->repository->name, $head->id);
             Log::info(json_encode($commit));
-            FlareBot::sendMessage("ten.java", FlareBot::COLOR . FlareBot::LIME . $commit['stats']['additions'] . FlareBot::COLOR . FlareBot::RED . $commit['stats']['deletions']);
+            FlareBot::sendMessage("ten.java", FlareBot::COLOR . FlareBot::LIME . $commit->stats->additions . FlareBot::COLOR . FlareBot::RED . $commit->stats->deletions);
         }
         return "Thanks.";
     }
