@@ -51,11 +51,14 @@ class HomeController extends BaseController {
                 }
             }
             $filesSum = $filesAdded + $filesModified + $filesRemoved;
-            $userRecord = DB::table("github_user_details")->where("username", $author)->first();
-            if ($userRecord == null) {
-                DB::table("github_user_details")->insert(array("username" => $author, "gravatar_id" => $gravatar));
-            } else if ($userRecord->gravatar_id != $gravatar) {
-                DB::table("github_user_details")->where("username", $author)->update(array("gravatar_id" => $gravatar));
+            if (isset($gravatar)) {
+                $userRecord = DB::table("github_user_details")->where("username", $author)->first();
+
+                if ($userRecord == null) {
+                    DB::table("github_user_details")->insert(array("username" => $author, "gravatar_id" => $gravatar));
+                } else if ($userRecord->gravatar_id != $gravatar) {
+                    DB::table("github_user_details")->where("username", $author)->update(array("gravatar_id" => $gravatar));
+                }
             }
             $commitMsg = Str::limit($commit['commit']['message'], 252);
             $commitEntry = array(
