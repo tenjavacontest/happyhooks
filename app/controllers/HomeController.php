@@ -54,7 +54,7 @@ class HomeController extends BaseController {
             } else if ($userRecord->gravatar_id != $gravatar) {
                 DB::table("github_user_details")->where("username", $author)->update(array("gravatar_id" => $gravatar));
             }
-
+            $commitMsg = Str::limit($commit['commit']['message'], 252);
             $commitEntry = array(
                 'repository' => $json->repository->name,
                 'username' => $author,
@@ -64,11 +64,11 @@ class HomeController extends BaseController {
                 'removed_files' => $filesRemoved,
                 'total_deletions' => $deletions,
                 'total_additions' => $additions,
-                'commit_message' => Str::limit($commit['commit']['message'], 252)
+                'commit_message' => $commitMsg,
             );
             DB::table("commit_stats")->insert($commitEntry);
             $friendlyUrl = Shortener::shortenGithubUrl($commit['commit']['url'], "tenjava-" . substr($head->id, 0, 6));
-            $message = $json->repository->name . " has just committed to their repo!" . FlareBot::BOLD . FlareBot::COLOR . FlareBot::GREEN . " " .
+            $message = $json->repository->name . ": \"$commitMsg\"" . FlareBot::BOLD . FlareBot::COLOR . FlareBot::GREEN . " " .
                        $filesSum . " file " . self::getWordForm($filesSum, "action") . FlareBot::BOLD . FlareBot::COLOR . " with a total of" .
                        FlareBot::COLOR . FlareBot::GREEN . FlareBot::BOLD . " " . $additions . " line " . self::getWordForm($additions, "addition")
                        . FlareBot::COLOR . FlareBot::BOLD . " and" . FlareBot::COLOR . FlareBot::RED . FlareBot::BOLD . " " . $deletions . " line " . self::getWordForm($deletions, "deletion")
