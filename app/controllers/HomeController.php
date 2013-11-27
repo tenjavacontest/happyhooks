@@ -29,6 +29,9 @@ class HomeController extends BaseController {
             $commit = $github->api('repo')->commits()->show('tenjavacontest', $json->repository->name, $head->id);
             Log::info(json_encode($commit));
             $author = $commit['author']['login'];
+            if (!isset($author)) {
+                $author = "Can't_Configure_Git (AKA " . $commit['author']['name'] . ")";
+            }
             $gravatar = $commit['author']['gravatar_id'];
             $additions = $commit['stats']['additions'];
             $deletions = $commit['stats']['deletions'];
