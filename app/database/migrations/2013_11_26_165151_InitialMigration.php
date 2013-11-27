@@ -22,6 +22,11 @@ class InitialMigration extends Migration {
             $table->integer("total_additions");
             $table->string("commit_message"); //255 default
         });
+
+        Schema::create('github_user_details', function (Blueprint $table) {
+            $table->string("username")->primary();
+            $table->string("gravatar_id", 32);
+        });
     }
 
     /**
@@ -31,6 +36,7 @@ class InitialMigration extends Migration {
      */
     public function down() {
         Schema::drop('commit_stats');
+        Schema::drop('github_user_details');
     }
 
 }

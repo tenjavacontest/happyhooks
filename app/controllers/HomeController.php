@@ -24,12 +24,48 @@ class HomeController extends BaseController {
             Log::info("Got payload " . Input::get("payload")); //TODO
             $json = json_decode(Input::get("payload"));
             $head = $json->head_commit;
-            $username = $head->author->username;
             $github = new Github\Client();
             $github->authenticate(Config::get("private-secure.github-token"), null, Github\Client::AUTH_HTTP_TOKEN);
             $commit = $github->api('repo')->commits()->show('tenjavacontest', $json->repository->name, $head->id);
             Log::info(json_encode($commit));
-            FlareBot::sendMessage("ten.java", FlareBot::COLOR . FlareBot::LIME . "Add: " . $commit['stats']['additions'] . FlareBot::COLOR . FlareBot::WHITE . " | " . FlareBot::COLOR . FlareBot::RED . "Del: " . $commit['stats']['deletions']);
+            $author = $commit['author']['login'];
+            $gravatar = $commit['author']['gravatar_id'];
+            $additions = $commit['stats']['additions'];
+            $deletions = $commit['stats']['deletions'];
+
+            $files = $commit['files'];
+            $filesAdded = 0;
+            $filesModified = 0;
+            $filesRemoved = 0;
+            foreach ($files as $file) {
+                Log::info("Yay! " . $file['status'] . " was " . $file['filename']);
+                if ($file['status'] == "added") {
+                    $filesAdded++;
+                } else if ($file['status'] == "modified" || $file['status'] == "changed") {
+                    $filesModified++;
+                } else {
+                    $filesRemoved++;
+                }
+            }
+            $userRecord = DB::table("github_user_details")->where("username", $author)->first();
+            if ($userRecord == null) {
+                DB::table("github_user_details")->insert(array("username" => $author, "gravatar_id" => $gravatar));
+            } else if ($userRecord->gravatar_id != $gravatar) {
+                DB::table("github_user_details")->where("username", $author)->update(array("gravatar_id" => $gravatar));
+            }
+
+            $commitEntry = array(
+                'repository' => $json->repository->name,
+                'username' => $author,
+                'commit_id' => $head->id,
+                'new_files' => $filesAdded,
+                'changed_files' => $filesModified,
+                'removed_files' => $filesRemoved,
+                'total_deletions' => $deletions,
+                'total_additions' => $additions,
+                'commit_message' => Str::limit($commit['commit']['message'], 252)
+            );
+            DB::table("commit_stats")->insert($commitEntry);
         }
         return "Thanks.";
     }
