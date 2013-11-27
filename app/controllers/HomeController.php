@@ -29,9 +29,13 @@ class HomeController extends BaseController {
             $commit = $github->api('repo')->commits()->show('tenjavacontest', $json->repository->name, $head->id);
             Log::info(json_encode($commit));
             $author = $commit['author']['login'];
+            $displayName = $json->repository->name;
+
             if (!isset($author)) {
                 $author = "Please_set_user.email (AKA " . $head->author->name . ")";
+                $displayName = $author;
             }
+
             $gravatar = $commit['author']['gravatar_id'];
             $additions = $commit['stats']['additions'];
             $deletions = $commit['stats']['deletions'];
@@ -74,7 +78,7 @@ class HomeController extends BaseController {
             );
             DB::table("commit_stats")->insert($commitEntry);
             $friendlyUrl = Shortener::shortenGithubUrl($commit['html_url'], "tenjava-" . substr($head->id, 0, 6));
-            $message = $json->repository->name . ": \"$commitMsg\"" . FlareBot::BOLD . FlareBot::COLOR . FlareBot::GREEN . " " .
+            $message = $displayName . ": \"$commitMsg\"." . FlareBot::BOLD . FlareBot::COLOR . FlareBot::GREEN . " " .
                        $filesSum . " file " . self::getWordForm($filesSum, "action") . FlareBot::BOLD . FlareBot::COLOR . " with a total of" .
                        FlareBot::COLOR . FlareBot::GREEN . FlareBot::BOLD . " " . $additions . " line " . self::getWordForm($additions, "addition")
                        . FlareBot::COLOR . FlareBot::BOLD . " and" . FlareBot::COLOR . FlareBot::RED . FlareBot::BOLD . " " . $deletions . " line " . self::getWordForm($deletions, "deletion")
