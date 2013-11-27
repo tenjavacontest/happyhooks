@@ -68,7 +68,7 @@ class HomeController extends BaseController {
             );
             DB::table("commit_stats")->insert($commitEntry);
             $friendlyUrl = Shortener::shortenGithubUrl($commit['commit']['url'], "tenjava-" . substr($head->id, 0, 6));
-            $message = FlareBot::COLOR . FlareBot::GREEN . $author . " has just committed to their repo at $friendlyUrl! " .
+            $message = FlareBot::COLOR . FlareBot::GREEN . $author . " has just committed to their repo at $friendlyUrl?! " .
                        $filesSum . " file " . self::getWordForm($filesSum, "action") . " with a total of " . $additions . " line " . self::getWordForm($additions, "addition")
                        . " and " . $deletions . " line " . self::getWordForm("deletion", $deletions);
             FlareBot::sendMessage("tenjava", $message);
