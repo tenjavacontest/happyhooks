@@ -30,7 +30,7 @@ class HomeController extends BaseController {
             Log::info(json_encode($commit));
             $author = $commit['author']['login'];
             if (!isset($author)) {
-                $author = "Can't_Configure_Git (AKA " . $commit['author']['name'] . ")";
+                $author = "Please_set_user.email (AKA " . $head->author->name . ")";
             }
             $gravatar = $commit['author']['gravatar_id'];
             $additions = $commit['stats']['additions'];
