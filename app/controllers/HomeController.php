@@ -71,7 +71,7 @@ class HomeController extends BaseController {
             $message = $json->repository->name . " has just committed to their repo!" . FlareBot::BOLD . FlareBot::COLOR . FlareBot::GREEN . " " .
                        $filesSum . " file " . self::getWordForm($filesSum, "action") . FlareBot::BOLD . FlareBot::COLOR . " with a total of" .
                        FlareBot::COLOR . FlareBot::GREEN . FlareBot::BOLD . " " . $additions . " line " . self::getWordForm($additions, "addition")
-                       . FlareBot::COLOR . FlareBot::BOLD . " and" . FlareBot::COLOR . FlareBot::RED . " " . $deletions . " line " . self::getWordForm($deletions, "deletion")
+                       . FlareBot::COLOR . FlareBot::BOLD . " and" . FlareBot::COLOR . FlareBot::RED . FlareBot::BOLD . " " . $deletions . " line " . self::getWordForm($deletions, "deletion")
                        . FlareBot::COLOR . FlareBot::BOLD . ". $friendlyUrl";
             FlareBot::sendMessage("ten.java", $message);
         }
