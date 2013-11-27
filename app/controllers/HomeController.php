@@ -47,7 +47,7 @@ class HomeController extends BaseController {
                     $filesRemoved++;
                 }
             }
-            $filesSum = $filesAdded . $filesModified . $filesRemoved;
+            $filesSum = $filesAdded + $filesModified + $filesRemoved;
             $userRecord = DB::table("github_user_details")->where("username", $author)->first();
             if ($userRecord == null) {
                 DB::table("github_user_details")->insert(array("username" => $author, "gravatar_id" => $gravatar));
@@ -68,9 +68,11 @@ class HomeController extends BaseController {
             );
             DB::table("commit_stats")->insert($commitEntry);
             $friendlyUrl = Shortener::shortenGithubUrl($commit['commit']['url'], "tenjava-" . substr($head->id, 0, 6));
-            $message = FlareBot::COLOR . FlareBot::GREEN . $json->repository->name . " has just committed to their repo at $friendlyUrl?! " .
-                       $filesSum . " file " . self::getWordForm($filesSum, "action") . " with a total of " . $additions . " line " . self::getWordForm($additions, "addition")
-                       . " and " . $deletions . " line " . self::getWordForm("deletion", $deletions);
+            $message = $json->repository->name . " has just committed to their repo!" . FlareBot::BOLD . FlareBot::COLOR . FlareBot::GREEN . " " .
+                       $filesSum . " file " . self::getWordForm($filesSum, "action") . FlareBot::BOLD . FlareBot::COLOR . " with a total of" .
+                       FlareBot::COLOR . FlareBot::GREEN . FlareBot::BOLD . " " . $additions . " line " . self::getWordForm($additions, "addition")
+                       . FlareBot::COLOR . FlareBot::BOLD . " and " . FlareBot::COLOR . FlareBot::RED . $deletions . " line " . self::getWordForm($deletions, "deletion")
+                       . FlareBot::COLOR . FlareBot::BOLD . ". $friendlyUrl";
             FlareBot::sendMessage("ten.java", $message);
         }
         return "Thanks.";
