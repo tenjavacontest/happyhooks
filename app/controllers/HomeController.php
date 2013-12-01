@@ -116,6 +116,10 @@ class HomeController extends BaseController {
             return self::getResponse(self::getError("Supply a valid ?number."));
         } else {
             $records = DB::table("commit_stats")->orderBy("created_at", "desc")->join('github_user_details', 'commit_stats.username', '=', 'github_user_details.username')->take($amount)->get();
+            foreach ($records as $key => $val) {
+                $carbon = new Carbon($val->created_at);
+                $records[$key]->created_at = $carbon->diffForHumans();
+            }
             return self::getResponse($records);
 
         }
