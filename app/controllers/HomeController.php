@@ -15,6 +15,13 @@ class HomeController extends BaseController {
     |
     */
 
+    public function __construct() {
+        $this->afterFilter(function ($response) {
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+            return $response;
+        });
+    }
+
     public function redirectThem() {
         return Redirect::to("http://tenjava.com");
     }
@@ -48,10 +55,12 @@ class HomeController extends BaseController {
                 Log::info("Yay! " . $file['status'] . " was " . $file['filename']);
                 if ($file['status'] == "added") {
                     $filesAdded++;
-                } else if ($file['status'] == "modified" || $file['status'] == "changed") {
-                    $filesModified++;
                 } else {
-                    $filesRemoved++;
+                    if ($file['status'] == "modified" || $file['status'] == "changed") {
+                        $filesModified++;
+                    } else {
+                        $filesRemoved++;
+                    }
                 }
             }
             $filesSum = $filesAdded + $filesModified + $filesRemoved;
@@ -60,8 +69,10 @@ class HomeController extends BaseController {
 
                 if ($userRecord == null) {
                     DB::table("github_user_details")->insert(array("username" => $author, "gravatar_id" => $gravatar));
-                } else if ($userRecord->gravatar_id != $gravatar) {
-                    DB::table("github_user_details")->where("username", $author)->update(array("gravatar_id" => $gravatar));
+                } else {
+                    if ($userRecord->gravatar_id != $gravatar) {
+                        DB::table("github_user_details")->where("username", $author)->update(array("gravatar_id" => $gravatar));
+                    }
                 }
             }
             $commitMsg = Str::limit($commit['commit']['message'], 252);
@@ -80,10 +91,10 @@ class HomeController extends BaseController {
             DB::table("commit_stats")->insert($commitEntry);
             $friendlyUrl = Shortener::shortenGithubUrl($commit['html_url'], "tenjava-" . substr($head->id, 0, 6));
             $message = $displayName . ": \"$commitMsg\"." . FlareBot::BOLD . FlareBot::COLOR . FlareBot::GREEN . " " .
-                       $filesSum . " file " . self::getWordForm($filesSum, "action") . FlareBot::BOLD . FlareBot::COLOR . " with a total of" .
-                       FlareBot::COLOR . FlareBot::GREEN . FlareBot::BOLD . " " . $additions . " line " . self::getWordForm($additions, "addition")
-                       . FlareBot::COLOR . FlareBot::BOLD . " and" . FlareBot::COLOR . FlareBot::RED . FlareBot::BOLD . " " . $deletions . " line " . self::getWordForm($deletions, "deletion")
-                       . FlareBot::COLOR . FlareBot::BOLD . ". $friendlyUrl";
+                $filesSum . " file " . self::getWordForm($filesSum, "action") . FlareBot::BOLD . FlareBot::COLOR . " with a total of" .
+                FlareBot::COLOR . FlareBot::GREEN . FlareBot::BOLD . " " . $additions . " line " . self::getWordForm($additions, "addition")
+                . FlareBot::COLOR . FlareBot::BOLD . " and" . FlareBot::COLOR . FlareBot::RED . FlareBot::BOLD . " " . $deletions . " line " . self::getWordForm($deletions, "deletion")
+                . FlareBot::COLOR . FlareBot::BOLD . ". $friendlyUrl";
             FlareBot::sendMessage("ten.java", $message);
         }
         return "Thanks.";
