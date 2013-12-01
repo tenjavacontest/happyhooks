@@ -99,6 +99,21 @@ class HomeController extends BaseController {
         return false;
     }
 
+    public function getCommits() {
+        $amount = Input::get("number");
+        if ($amount == null || $amount < 1 || $amount > 100) {
+            return self::getError("Supply a valid ?number.");
+        } else {
+            $records = DB::table("commit_stats")->orderBy("created_at", "desc")->join('github_user_details', 'commit_stats.username', '=', 'github_user_details.username')->take($amount)->get();
+            return Response::json($records);
+
+        }
+    }
+
+    private function getError($error) {
+        return Response::json(array("error" => $error));
+    }
+
     public static function getWordForm($num, $singular) {
         if ($num > 1 || $num == 0) {
             return str_plural($singular);

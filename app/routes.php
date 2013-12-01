@@ -13,3 +13,5 @@
 
 Route::get('/', "HomeController@redirectThem");
 Route::post('/hook', "HomeController@handlePayload");
+
+Route::get('/api/commits', 'HomeController@getCommits');
