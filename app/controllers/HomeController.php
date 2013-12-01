@@ -75,6 +75,7 @@ class HomeController extends BaseController {
                 'total_deletions' => $deletions,
                 'total_additions' => $additions,
                 'commit_message' => $commitMsg,
+                'created_at' => new DateTime()
             );
             DB::table("commit_stats")->insert($commitEntry);
             $friendlyUrl = Shortener::shortenGithubUrl($commit['html_url'], "tenjava-" . substr($head->id, 0, 6));
