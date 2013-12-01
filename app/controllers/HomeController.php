@@ -16,7 +16,7 @@ class HomeController extends BaseController {
     */
 
     public function __construct() {
-        $this->afterFilter(function ($response) {
+        $this->afterFilter(function ($route, $x, $response) {
             $response->headers->set('Access-Control-Allow-Origin', '*');
             return $response;
         });
