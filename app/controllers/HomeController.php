@@ -102,11 +102,19 @@ class HomeController extends BaseController {
     public function getCommits() {
         $amount = Input::get("number");
         if ($amount == null || $amount < 1 || $amount > 100) {
-            return self::getError("Supply a valid ?number.");
+            return self::getResponse(self::getError("Supply a valid ?number."));
         } else {
             $records = DB::table("commit_stats")->orderBy("created_at", "desc")->join('github_user_details', 'commit_stats.username', '=', 'github_user_details.username')->take($amount)->get();
-            return Response::json($records);
+            return self::getResponse($records);
 
+        }
+    }
+
+    public function getResponse($result) {
+        if (Input::has("callback")) {
+            return Response::json($result)->setCallback(Input::get('callback'));
+        } else {
+            return Response::json($result);
         }
     }
 
