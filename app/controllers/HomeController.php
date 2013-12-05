@@ -90,7 +90,6 @@ class HomeController extends BaseController {
                 'commit_message' => $commitMsg,
                 'created_at' => new DateTime()
             );
-            Requests::po
             DB::table("commit_stats")->insert($commitEntry);
             $friendlyUrl = Shortener::shortenGithubUrl($commit['html_url'], "tenjava-" . substr($head->id, 0, 6));
             $message = $displayName . ": \"$commitMsg\"." . FlareBot::BOLD . FlareBot::COLOR . FlareBot::GREEN . " " .
