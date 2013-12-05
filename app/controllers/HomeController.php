@@ -90,6 +90,7 @@ class HomeController extends BaseController {
                 'commit_message' => $commitMsg,
                 'created_at' => new DateTime()
             );
+            Requests::po
             DB::table("commit_stats")->insert($commitEntry);
             $friendlyUrl = Shortener::shortenGithubUrl($commit['html_url'], "tenjava-" . substr($head->id, 0, 6));
             $message = $displayName . ": \"$commitMsg\"." . FlareBot::BOLD . FlareBot::COLOR . FlareBot::GREEN . " " .
@@ -121,6 +122,7 @@ class HomeController extends BaseController {
             foreach ($records as $key => $val) {
                 $carbon = new Carbon($val->created_at);
                 $records[$key]->created_at = $carbon->diffForHumans();
+                $records[$key]->commit_message = htmlentities($records[$key]->commit_message);
             }
             return self::getResponse($records);
 
