@@ -92,6 +92,7 @@ class HomeController extends BaseController {
             );
             DB::table("commit_stats")->insert($commitEntry);
             $friendlyUrl = Shortener::shortenGithubUrl($commit['html_url'], "tenjava-" . substr($head->id, 0, 6));
+            $commitMsg = str_replace(array(FlareBot::BOLD, FlareBot::COLOR), "", $commitMsg);
             $message = $displayName . ": \"$commitMsg\"." . FlareBot::BOLD . FlareBot::COLOR . FlareBot::GREEN . " " .
                 $filesSum . " file " . self::getWordForm($filesSum, "action") . FlareBot::BOLD . FlareBot::COLOR . " with a total of" .
                 FlareBot::COLOR . FlareBot::GREEN . FlareBot::BOLD . " " . $additions . " line " . self::getWordForm($additions, "addition")
