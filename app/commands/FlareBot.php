@@ -25,7 +25,6 @@ class FlareBot {
         if (starts_with($channel, "#")) {
             $channel = substr($channel, 1);
         }
-        $message = preg_replace("/[^A-Za-z0-9 ]/", '', $message);
         Requests::get(Config::get("private-secure.flarebot-url") . "&channel=" . $channel . "&message=" . str_replace("\n", "[]", urlencode($message)));
     }
 } 
